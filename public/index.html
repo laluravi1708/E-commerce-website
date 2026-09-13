@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ShopNest | E-Commerce</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="navbar">
+    <div class="brand">Shop<span>Nest</span></div>
+    <nav>
+      <button class="nav-btn" onclick="showSection('home')">Home</button>
+      <button class="nav-btn" onclick="showSection('products')">Products</button>
+      <button class="nav-btn" onclick="showSection('orders')">My Orders</button>
+      <button class="nav-btn" onclick="showSection('cart')">Cart <b id="cartCount">0</b></button>
+      <button id="adminNav" class="nav-btn hidden" onclick="showSection('admin')">Admin</button>
+      <button id="loginNav" class="nav-btn primary" onclick="showSection('login')">Login</button>
+      <button id="logoutNav" class="nav-btn hidden" onclick="logout()">Logout</button>
+    </nav>
+  </header>
+
+  <main>
+    <section id="home" class="section active">
+      <div class="hero">
+        <div>
+          <p class="eyebrow">SMART • SIMPLE • SECURE</p>
+          <h1>Your everyday shopping, made easy.</h1>
+          <p>Browse products, manage your cart, place orders and track delivery from one clean web application.</p>
+          <button class="primary big" onclick="showSection('products')">Shop Now</button>
+        </div>
+        <div class="hero-card">
+          <div class="hero-icon">🛍️</div>
+          <h3>ShopNest</h3>
+          <p>Full-stack E-Commerce Demo</p>
+        </div>
+      </div>
+
+      <div class="features">
+        <div class="feature"><span>🛒</span><h3>Easy Cart</h3><p>Add products and checkout quickly.</p></div>
+        <div class="feature"><span>🔐</span><h3>Secure Login</h3><p>User and Admin role-based access.</p></div>
+        <div class="feature"><span>📦</span><h3>Order Tracking</h3><p>Follow your order status.</p></div>
+      </div>
+    </section>
+
+    <section id="products" class="section">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">OUR STORE</p>
+          <h2>Product Catalog</h2>
+        </div>
+        <input id="searchInput" class="search" placeholder="Search products..." oninput="renderProducts()">
+      </div>
+      <div id="productGrid" class="product-grid"></div>
+    </section>
+
+    <section id="cart" class="section">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">YOUR SELECTION</p>
+          <h2>Shopping Cart</h2>
+        </div>
+      </div>
+      <div id="cartContent"></div>
+    </section>
+
+    <section id="login" class="section auth-section">
+      <div class="auth-card">
+        <div class="tabs">
+          <button id="loginTab" class="tab active" onclick="setAuthMode('login')">Login</button>
+          <button id="registerTab" class="tab" onclick="setAuthMode('register')">Register</button>
+        </div>
+        <form id="authForm" onsubmit="submitAuth(event)">
+          <h2 id="authTitle">Welcome back</h2>
+          <div id="nameField" class="form-group hidden">
+            <label>Name</label>
+            <input id="authName" type="text" placeholder="Your name">
+          </div>
+          <div class="form-group">
+            <label>Email</label>
+            <input id="authEmail" type="email" placeholder="you@example.com" required>
+          </div>
+          <div class="form-group">
+            <label>Password</label>
+            <input id="authPassword" type="password" placeholder="Minimum 6 characters" required>
+          </div>
+          <button class="primary full" type="submit" id="authSubmit">Login</button>
+          <p id="authMessage" class="message"></p>
+        </form>
+      </div>
+    </section>
+
+    <section id="checkout" class="section">
+      <div class="checkout-card">
+        <p class="eyebrow">FINAL STEP</p>
+        <h2>Checkout</h2>
+        <div id="checkoutSummary"></div>
+        <form onsubmit="placeOrder(event)">
+          <div class="form-group">
+            <label>Shipping Address</label>
+            <textarea id="shippingAddress" required placeholder="House number, street, city, PIN code"></textarea>
+          </div>
+          <div class="form-group">
+            <label>Payment Method</label>
+            <select id="paymentMethod">
+              <option>Demo Payment</option>
+              <option>Cash on Delivery</option>
+            </select>
+          </div>
+          <button class="primary full" type="submit">Place Order</button>
+          <p class="small-note">Demo checkout only — no real card/payment details are collected.</p>
+        </form>
+      </div>
+    </section>
+
+    <section id="orders" class="section">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">PURCHASE HISTORY</p>
+          <h2>My Orders</h2>
+        </div>
+      </div>
+      <div id="ordersContent"></div>
+    </section>
+
+    <section id="admin" class="section">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">CONTROL CENTER</p>
+          <h2>Admin Dashboard</h2>
+        </div>
+      </div>
+
+      <div class="admin-layout">
+        <div class="panel">
+          <h3 id="productFormTitle">Add Product</h3>
+          <form id="productForm" onsubmit="saveProduct(event)">
+            <input id="editProductId" type="hidden">
+            <div class="form-group"><label>Product Name</label><input id="productName" required></div>
+            <div class="form-group"><label>Description</label><textarea id="productDescription"></textarea></div>
+            <div class="form-row">
+              <div class="form-group"><label>Category</label><input id="productCategory" placeholder="Electronics"></div>
+              <div class="form-group"><label>Price (₹)</label><input id="productPrice" type="number" min="0" required></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label>Stock</label><input id="productStock" type="number" min="0" value="10" required></div>
+              <div class="form-group"><label>Image URL</label><input id="productImage" placeholder="https://..."></div>
+            </div>
+            <button class="primary" type="submit">Save Product</button>
+            <button class="secondary hidden" type="button" id="cancelEdit" onclick="resetProductForm()">Cancel Edit</button>
+            <p id="productMessage" class="message"></p>
+          </form>
+        </div>
+
+        <div class="panel">
+          <h3>Manage Products</h3>
+          <div id="adminProducts"></div>
+        </div>
+      </div>
+
+      <div class="panel orders-panel">
+        <h3>Manage Orders</h3>
+        <div id="adminOrders"></div>
+      </div>
+    </section>
+  </main>
+
+  <div id="toast" class="toast"></div>
+
+  <footer>
+    <p>ShopNest © 2026 • Academic Full-Stack E-Commerce Project</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
